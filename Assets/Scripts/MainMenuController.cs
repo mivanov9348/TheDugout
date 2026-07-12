@@ -5,12 +5,11 @@ public class MainMenuController : MonoBehaviour
 {
     public void OnNewGameClicked()
     {
-        SceneManager.LoadScene("Dashboard");
+        SceneManager.LoadScene("PlayerSetup");
     }
 
     public void OnExitClicked()
     {
         Application.Quit();
-        Debug.Log("Quit pressed (не работи в Editor, само в билднатата игра)");
     }
 }
