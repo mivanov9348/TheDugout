@@ -8,16 +8,24 @@ public class PlayerSetupController : MonoBehaviour
     public TMP_InputField usernameInput;
     public TMP_Dropdown teamDropdown;
 
-    // по-долу ще запълваме dropdown-а с реални отбори от MasterData
-
     public void OnStartCareerClicked()
     {
-        string username = usernameInput.text;
-        int selectedTeamId = /* вземи Id-то на избрания отбор от dropdown-а */ 1; // засега placeholder
+        if (usernameInput == null)
+        {
+            Debug.LogError("usernameInput is NULL - not assigned in Inspector!");
+            return;
+        }
 
+        if (GameDatabaseManager.Instance == null)
+        {
+            Debug.LogError("GameDatabaseManager.Instance is NULL!");
+            return;
+        }
+
+        string username = string.IsNullOrEmpty(usernameInput.text) ? "Manager" : usernameInput.text;
         string newSavePath = SaveManager.CreateNewSave(username);
         GameDatabaseManager.Instance.LoadSave(newSavePath);
-        GameDatabaseManager.Instance.CreateManagerProfile(username, selectedTeamId);
+        GameDatabaseManager.Instance.CreateManagerProfile(username, 1);
 
         SceneManager.LoadScene("Hub");
     }

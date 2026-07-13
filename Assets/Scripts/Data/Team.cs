@@ -15,7 +15,7 @@ namespace TheDugout.Data
         public int LeagueId { get; set; }
 
         public int Strength { get; set; }
-        public int Budget { get; set; }   
+        public int Budget { get; set; }
 
         public Team() { }
 

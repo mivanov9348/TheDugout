@@ -1,0 +1,5 @@
+[
+  { "name": "Levski Sofia", "leagueName": "Efbet Liga", "strength": 75, "budget": 2000000 },
+  { "name": "CSKA Sofia", "leagueName": "Efbet Liga", "strength": 72, "budget": 1800000 },
+  { "name": "Arsenal", "leagueName": "Premier League", "strength": 90, "budget": 150000000 }
+]

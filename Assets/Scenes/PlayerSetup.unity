@@ -2604,6 +2604,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7059f3f9259bf1847af6f3e37a1ac9d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSetupController
+  usernameInput: {fileID: 951247660}
+  teamDropdown: {fileID: 826136844}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

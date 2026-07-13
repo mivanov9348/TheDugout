@@ -1,7 +1,9 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using SQLite;
 using UnityEngine;
+using TheDugout.Data;
 
 namespace TheDugout.Database
 {
@@ -10,10 +12,6 @@ namespace TheDugout.Database
         private static string SavesFolder =>
             Path.Combine(Application.persistentDataPath, "Saves");
 
-        /// <summary>
-        /// Създава нов Save файл, копирайки MasterData едно към едно.
-        /// Връща пътя до новия Save файл.
-        /// </summary>
         public static string CreateNewSave(string saveName)
         {
             if (!Directory.Exists(SavesFolder))
@@ -22,7 +20,18 @@ namespace TheDugout.Database
             string safeName = saveName.Replace(" ", "_");
             string savePath = Path.Combine(SavesFolder, $"{safeName}_{DateTime.Now:yyyyMMdd_HHmmss}.db");
 
-            File.Copy(MasterDatabaseManager.MasterDbPath, savePath, overwrite: false);
+            using (var connection = new SQLiteConnection(savePath))
+            {
+                // CODE-FIRST: схемата идва директно от моделите
+                connection.CreateTable<Country>();
+                connection.CreateTable<League>();
+                connection.CreateTable<Team>();
+                connection.CreateTable<Card>();
+                connection.CreateTable<ManagerProfile>();
+
+                // Съдържанието идва от JSON
+                MasterDataImporter.ImportInto(connection);
+            }
 
             Debug.Log("New save created at: " + savePath);
             return savePath;
@@ -33,8 +42,7 @@ namespace TheDugout.Database
             if (!Directory.Exists(SavesFolder))
                 return new List<string>();
 
-            var files = Directory.GetFiles(SavesFolder, "*.db");
-            return new List<string>(files);
+            return new List<string>(Directory.GetFiles(SavesFolder, "*.db"));
         }
 
         public static void DeleteSave(string savePath)

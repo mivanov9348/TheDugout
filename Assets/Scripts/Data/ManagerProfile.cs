@@ -13,7 +13,7 @@ namespace TheDugout.Data
         public string Username { get; set; }
 
         [Indexed]
-        public int ManagedTeamId { get; set; }    // сочи към Team.Id В СЪЩИЯ Save файл
+        public int ManagedTeamId { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public int CurrentSeason { get; set; } = 1;
