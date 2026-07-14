@@ -55,9 +55,9 @@ namespace TheDugout.Database
             _connection.Insert(efbetLiga);
             _connection.Insert(premierLeague);
 
-            _connection.Insert(new Team("Levski Sofia", efbetLiga.Id, 75, 2000000));
-            _connection.Insert(new Team("CSKA Sofia", efbetLiga.Id, 72, 1800000));
-            _connection.Insert(new Team("Arsenal", premierLeague.Id, 90, 150000000));
+            _connection.Insert(new Team("Levski Sofia", efbetLiga.Id));
+            _connection.Insert(new Team("CSKA Sofia", efbetLiga.Id));
+            _connection.Insert(new Team("Arsenal", premierLeague.Id));
 
             _connection.Insert(new Card("PASS", "Pass", "Retains possession"));
             _connection.Insert(new Card("GOAL", "GOAL!", "Automatic goal"));

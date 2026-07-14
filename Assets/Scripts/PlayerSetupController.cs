@@ -1,32 +1,179 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TheDugout.Database;
+using UnityEngine.UI;
 using TMPro;
+using TheDugout.Database;
 
 public class PlayerSetupController : MonoBehaviour
 {
+    [Header("UI References")]
     public TMP_InputField usernameInput;
-    public TMP_Dropdown teamDropdown;
+    public TMP_Dropdown leagueDropdown;
+    public Transform teamGridContent;
+    public GameObject teamCardPrefab;
+    public Button startCareerButton;
+    public GameObject errorText;
+    public TMP_Text errorTextLabel;
+
+    [Header("Confirm Popup")]
+    public GameObject confirmPopup;
+    public TMP_Text confirmMessageText;
+    public Button confirmYesButton;
+    public Button confirmNoButton;
+
+    private List<string> leagueNames;
+    private List<MasterDataReader.TeamOption> currentTeams;
+    private string selectedTeamName;
+    private GameObject selectedCardInstance;
+
+    void Start()
+    {
+        PopulateLeagueDropdown();
+        leagueDropdown.onValueChanged.AddListener(OnLeagueChanged);
+        OnLeagueChanged(0);
+
+        errorText.SetActive(false);
+        confirmPopup.SetActive(false);
+
+        // ТУК БЕШЕ ПРОБЛЕМЪТ: Свързваме бутона с кода!
+        startCareerButton.onClick.AddListener(OnStartCareerClicked);
+
+        confirmYesButton.onClick.AddListener(ConfirmAndStart);
+        confirmNoButton.onClick.AddListener(() => confirmPopup.SetActive(false));
+    }
+
+    private void PopulateLeagueDropdown()
+    {
+        leagueNames = MasterDataReader.GetAllLeagueNames();
+        leagueDropdown.ClearOptions();
+        leagueDropdown.AddOptions(leagueNames);
+    }
+
+    private void OnLeagueChanged(int index)
+    {
+        string leagueName = leagueNames[index];
+        currentTeams = MasterDataReader.GetTeamsByLeague(leagueName);
+        PopulateTeamGrid();
+    }
+
+    private void PopulateTeamGrid()
+    {
+        foreach (Transform child in teamGridContent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        selectedTeamName = null;
+        selectedCardInstance = null;
+
+        foreach (var team in currentTeams)
+        {
+            GameObject card = Instantiate(teamCardPrefab, teamGridContent);
+
+            TMP_Text nameText = card.transform.Find("TeamNameText")?.GetComponent<TMP_Text>();
+            if (nameText != null)
+            {
+                nameText.text = team.TeamName;
+                nameText.color = Color.white; // По подразбиране текстът е бял
+            }
+
+            Image img = card.GetComponent<Image>();
+            if (img != null)
+            {
+                img.color = new Color(0.1f, 0.1f, 0.1f); // По подразбиране бутонът е почти черен
+            }
+
+            Button cardButton = card.GetComponent<Button>();
+            string capturedName = team.TeamName;
+            GameObject capturedCard = card;
+
+            cardButton.onClick.AddListener(() => SelectTeam(capturedName, capturedCard));
+        }
+    }
+
+    private void SelectTeam(string teamName, GameObject cardInstance)
+    {
+        // Връщаме стария бутон към нормален стил (тъмен фон, бял текст)
+        if (selectedCardInstance != null)
+        {
+            Image prevImg = selectedCardInstance.GetComponent<Image>();
+            if (prevImg != null) prevImg.color = new Color(0.1f, 0.1f, 0.1f);
+
+            TMP_Text prevText = selectedCardInstance.transform.Find("TeamNameText")?.GetComponent<TMP_Text>();
+            if (prevText != null) prevText.color = Color.white;
+        }
+
+        // Оцветяваме новия избран бутон (бял фон, черен текст за контраст)
+        Image img = cardInstance.GetComponent<Image>();
+        if (img != null) img.color = Color.white;
+
+        TMP_Text currentText = cardInstance.transform.Find("TeamNameText")?.GetComponent<TMP_Text>();
+        if (currentText != null) currentText.color = Color.black;
+
+        selectedTeamName = teamName;
+        selectedCardInstance = cardInstance;
+
+        HideError();
+    }
+
+    // ------- ВАЛИДАЦИЯ -------
 
     public void OnStartCareerClicked()
     {
-        if (usernameInput == null)
+        string username = usernameInput.text.Trim();
+
+        // Вече проверяваме и дали случайно не пише текста по подразбиране
+        if (string.IsNullOrEmpty(username) || username == "Enter your name...")
         {
-            Debug.LogError("usernameInput is NULL - not assigned in Inspector!");
+            ShowError("Please enter a manager name.");
             return;
         }
 
-        if (GameDatabaseManager.Instance == null)
+        if (string.IsNullOrEmpty(selectedTeamName))
         {
-            Debug.LogError("GameDatabaseManager.Instance is NULL!");
+            ShowError("Please select a team.");
             return;
         }
 
-        string username = string.IsNullOrEmpty(usernameInput.text) ? "Manager" : usernameInput.text;
-        string newSavePath = SaveManager.CreateNewSave(username);
+        ShowConfirmPopup(username, selectedTeamName);
+    }
+
+    private void ShowError(string message)
+    {
+        errorTextLabel.text = message;
+        errorText.SetActive(true);
+    }
+
+    private void HideError()
+    {
+        errorText.SetActive(false);
+    }
+
+    // ------- ПОТВЪРЖДЕНИЕ -------
+
+    private void ShowConfirmPopup(string username, string teamName)
+    {
+        confirmMessageText.text = $"Start career as <b>{username}</b>\nmanaging <b>{teamName}</b>?";
+        confirmPopup.SetActive(true);
+    }
+
+    private void ConfirmAndStart()
+    {
+        confirmPopup.SetActive(false);
+
+        string username = usernameInput.text.Trim();
+
+        string newSavePath = SaveManager.CreateNewSave(selectedTeamName);
         GameDatabaseManager.Instance.LoadSave(newSavePath);
-        GameDatabaseManager.Instance.CreateManagerProfile(username, 1);
+
+        var allTeamsInSave = GameDatabaseManager.Instance.GetAllTeams();
+        var matchedTeam = allTeamsInSave.FirstOrDefault(t => t.Name == selectedTeamName);
+        int teamId = matchedTeam != null ? matchedTeam.Id : allTeamsInSave.First().Id;
+
+        GameDatabaseManager.Instance.CreateManagerProfile(username, teamId);
 
         SceneManager.LoadScene("Hub");
     }
-}
+}   

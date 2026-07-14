@@ -14,17 +14,15 @@ namespace TheDugout.Data
         [Indexed]
         public int LeagueId { get; set; }
 
-        public int Strength { get; set; }
-        public int Budget { get; set; }
+        public string LogoPath { get; set; }
 
         public Team() { }
 
-        public Team(string name, int leagueId, int strength, int budget)
+        public Team(string name, int leagueId, string logoPath = "")
         {
             Name = name;
             LeagueId = leagueId;
-            Strength = strength;
-            Budget = budget;
+            LogoPath = logoPath;
         }
     }
 }

@@ -5,7 +5,6 @@
     {
         public string name;
         public string leagueName;
-        public int strength;
-        public int budget;
+        public string logoPath;
     }
 }

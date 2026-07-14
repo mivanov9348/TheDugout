@@ -37,7 +37,7 @@ namespace TheDugout.Database
             foreach (var t in teams)
             {
                 int leagueId = leagueLookup[t.leagueName];
-                connection.Insert(new Team(t.name, leagueId, t.strength, t.budget));
+                connection.Insert(new Team(t.name, leagueId, t.logoPath));
             }
 
             var cards = LoadJsonArray<CardDto>(Path.Combine(basePath, "cards.json"));
