@@ -15,15 +15,18 @@ namespace TheDugout.Data
         [Indexed]
         public int ManagedTeamId { get; set; }
 
+        [Indexed]
+        public int CurrentSeasonId { get; set; }   
+
         public DateTime CreatedAt { get; set; }
-        public int CurrentSeason { get; set; } = 1;
 
         public ManagerProfile() { }
 
-        public ManagerProfile(string username, int managedTeamId)
+        public ManagerProfile(string username, int managedTeamId, int currentSeasonId)
         {
             Username = username;
             ManagedTeamId = managedTeamId;
+            CurrentSeasonId = currentSeasonId;
             CreatedAt = DateTime.Now;
         }
     }

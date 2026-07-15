@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d15e4b3d16ce3594ea9ea1f6b53d98fd
+guid: a3b78f48e36539c468a008ed194269da
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7985182425126145291
-    second: "14.07.2026 \u0433., 20_29_44_0"
+      213: 4006920540374038147
+    second: Gemini_Generated_Image_ysoiovysoiovysoi_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "14.07.2026 \u0433., 20_29_44_0"
+      name: Gemini_Generated_Image_ysoiovysoiovysoi_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1536
-        height: 1024
+        width: 2752
+        height: 1536
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5f2f9a344eeee2190800000000000000
-      internalID: -7985182425126145291
+      spriteID: 386f53c70017b9730800000000000000
+      internalID: 4006920540374038147
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "14.07.2026 \u0433., 20_29_44_0": -7985182425126145291
+      Gemini_Generated_Image_ysoiovysoiovysoi_0: 4006920540374038147
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

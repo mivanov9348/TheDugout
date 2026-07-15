@@ -1,10 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using TheDugout.Data;
+using TheDugout.Database;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
-using TheDugout.Database;
 
 public class PlayerSetupController : MonoBehaviour
 {
@@ -172,7 +174,27 @@ public class PlayerSetupController : MonoBehaviour
         var matchedTeam = allTeamsInSave.FirstOrDefault(t => t.Name == selectedTeamName);
         int teamId = matchedTeam != null ? matchedTeam.Id : allTeamsInSave.First().Id;
 
-        GameDatabaseManager.Instance.CreateManagerProfile(username, teamId);
+        // 1. създай сезона ПЪРВО
+        var season = GameDatabaseManager.Instance.CreateSeason(1, isActive: true);
+
+        // 2. вече можем да създадем manager profile-а, свързан към сезона
+        GameDatabaseManager.Instance.CreateManagerProfile(username, teamId, season.Id);
+
+        // 3. генерирай competition + fixtures за сезона
+        var leagueTeams = GameDatabaseManager.Instance.GetTeamsByLeague(matchedTeam.LeagueId);
+        var leagueCompetition = GameDatabaseManager.Instance.CreateCompetition(
+            $"League Season {season.Number}",
+            CompetitionTypes.League,
+            season.Id,
+            matchedTeam.LeagueId
+        );
+
+        var fixtures = TheDugout.Logic.FixtureGenerator.GenerateRoundRobin(
+            leagueCompetition.Id, leagueTeams, DateTime.Now
+        );
+        GameDatabaseManager.Instance.InsertFixtures(fixtures);
+
+        Debug.Log($"Generated {fixtures.Count} fixtures for season {season.Number}.");
 
         SceneManager.LoadScene("Hub");
     }
