@@ -1,12 +1,29 @@
 [
-  { "code": "PASS", "displayName": "Pass", "description": "Retains possession" },
-  { "code": "GOAL", "displayName": "GOAL!", "description": "Automatic goal" },
-  { "code": "CHANCE", "displayName": "Chance", "description": "Chance to score" },
-  { "code": "OFFSIDE", "displayName": "Offside", "description": "Loses possession" },
-  { "code": "TACKLE", "displayName": "Tackle", "description": "Usually loses possession" },
-  { "code": "PENALTY", "displayName": "Penalty", "description": "Penalty mini-game" },
-  { "code": "INJURY", "displayName": "Injury", "description": "Weakens team" },
-  { "code": "RED_CARD", "displayName": "Red Card", "description": "Player sent off" },
-  { "code": "END_OF_HALF", "displayName": "End of Half", "description": "Ends current half" },
-	  {"code": "END_OF_MATCH", "displayName": "End of Match", "description": "Full-Time"}
+  { "code": "PASS_SUCCESSFUL", "category": "PASS", "effectType": "KEEP_TURN", "displayName": "Pass - Successful", "description": "Retains possession", "dropWeight": 7 },
+  { "code": "PASS_UNSUCCESSFUL", "category": "PASS", "effectType": "PASS_TURN", "displayName": "Pass - Unsuccessful", "description": "Loses possession", "dropWeight": 3 },
+
+  { "code": "THROW_IN", "category": "THROW_IN", "effectType": "KEEP_TURN", "displayName": "Throw In", "description": "Retains possession", "dropWeight": 10 },
+
+  { "code": "SHOOT_GOAL", "category": "SHOOT", "effectType": "GOAL", "displayName": "Shot - GOAL!", "description": "Goal scored", "dropWeight": 10 },
+  { "code": "SHOOT_SAVED", "category": "SHOOT", "effectType": "PASS_TURN", "displayName": "Shot - Saved", "description": "Goalkeeper saves", "dropWeight": 25 },
+  { "code": "SHOOT_MISSED", "category": "SHOOT", "effectType": "PASS_TURN", "displayName": "Shot - Missed", "description": "Shot missed", "dropWeight": 20 },
+  { "code": "SHOOT_OUT", "category": "SHOOT", "effectType": "PASS_TURN", "displayName": "Shot - Out", "description": "Ball goes out", "dropWeight": 15 },
+  { "code": "SHOOT_CORNER", "category": "SHOOT", "effectType": "OPEN_CORNER", "displayName": "Shot - Corner", "description": "Deflected for a corner", "dropWeight": 20 },
+
+  { "code": "TACKLE_SUCCESSFUL", "category": "TACKLE", "effectType": "KEEP_TURN", "displayName": "Tackle - Successful", "description": "Wins the ball back", "dropWeight": 13 },
+  { "code": "TACKLE_YELLOW", "category": "TACKLE", "effectType": "OPP_DRAW_2", "displayName": "Tackle - Yellow Card", "description": "Opponent draws twice", "dropWeight": 5 },
+  { "code": "TACKLE_RED", "category": "TACKLE", "effectType": "OPP_DRAW_3", "displayName": "Tackle - Red Card", "description": "Opponent draws three times", "dropWeight": 2 },
+
+  { "code": "PENALTY", "category": "PENALTY", "effectType": "OPEN_PENALTY", "displayName": "Penalty", "description": "Opens penalty sub-deck", "dropWeight": 1 },
+
+  { "code": "FULL_TIME", "category": "FULL_TIME", "effectType": "END_MATCH", "displayName": "Full Time", "description": "Ends the match", "dropWeight": 1 },
+{ "code": "CORNER_GOAL", "category": "CORNER", "effectType": "GOAL", "displayName": "Corner - GOAL!", "description": "Scored from the corner", "dropWeight": 15 },
+  { "code": "CORNER_CLEARED", "category": "CORNER", "effectType": "PASS_TURN", "displayName": "Corner - Cleared", "description": "Defense clears the corner", "dropWeight": 40 },
+  { "code": "CORNER_SAVED", "category": "CORNER", "effectType": "PASS_TURN", "displayName": "Corner - Saved", "description": "Goalkeeper saves", "dropWeight": 25 },
+  { "code": "CORNER_OUT", "category": "CORNER", "effectType": "PASS_TURN", "displayName": "Corner - Out", "description": "Ball goes out", "dropWeight": 20 },
+
+  { "code": "PENALTY_SCORED", "category": "PENALTY_OUTCOME", "effectType": "GOAL", "displayName": "Penalty - Scored", "description": "Penalty converted", "dropWeight": 70 },
+  { "code": "PENALTY_MISSED", "category": "PENALTY_OUTCOME", "effectType": "PASS_TURN", "displayName": "Penalty - Missed", "description": "Penalty missed", "dropWeight": 15 },
+  { "code": "PENALTY_SAVED", "category": "PENALTY_OUTCOME", "effectType": "PASS_TURN", "displayName": "Penalty - Saved", "description": "Goalkeeper saves the penalty", "dropWeight": 15 }
+
 ]

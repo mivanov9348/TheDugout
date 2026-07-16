@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using Assets.Scripts.DTO;
 using SQLite;
-using UnityEngine;
+using System.Collections.Generic;
+using System.IO;
 using TheDugout.Data;
 using TheDugout.Data.DTO;
+using UnityEngine;
 
 namespace TheDugout.Database
 {
@@ -13,8 +15,7 @@ namespace TheDugout.Database
             string basePath = Path.Combine(Application.streamingAssetsPath, "MasterData");
 
             var countries = LoadJsonArray<CountryDto>(Path.Combine(basePath, "countries.json"));
-            var countryLookup = new System.Collections.Generic.Dictionary<string, int>();
-
+            var countryLookup = new Dictionary<string, int>();
             foreach (var c in countries)
             {
                 var entity = new Country(c.name, c.code);
@@ -23,8 +24,7 @@ namespace TheDugout.Database
             }
 
             var leagues = LoadJsonArray<LeagueDto>(Path.Combine(basePath, "leagues.json"));
-            var leagueLookup = new System.Collections.Generic.Dictionary<string, int>();
-
+            var leagueLookup = new Dictionary<string, int>();
             foreach (var l in leagues)
             {
                 int countryId = countryLookup[l.countryCode];
@@ -43,10 +43,16 @@ namespace TheDugout.Database
             var cards = LoadJsonArray<CardDto>(Path.Combine(basePath, "cards.json"));
             foreach (var c in cards)
             {
-                connection.Insert(new Card(c.code, c.displayName, c.description));
+                connection.Insert(new Card(c.code, c.category, c.effectType, c.displayName, c.description, c.dropWeight));
             }
 
-            Debug.Log($"Imported: {countries.Length} countries, {leagues.Length} leagues, {teams.Length} teams, {cards.Length} cards.");
+            var deckSlots = LoadJsonArray<DeckSlotDto>(Path.Combine(basePath, "deckslots.json"));
+            foreach (var d in deckSlots)
+            {
+                connection.Insert(new DeckSlotDefinition(d.cardCode, d.min, d.max));
+            }
+
+            Debug.Log($"Imported: {countries.Length} countries, {leagues.Length} leagues, {teams.Length} teams, {cards.Length} cards, {deckSlots.Length} deck slots.");
         }
 
         private static T[] LoadJsonArray<T>(string filePath)

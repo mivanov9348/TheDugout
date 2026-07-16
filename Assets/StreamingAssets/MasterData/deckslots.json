@@ -1,0 +1,15 @@
+[
+  { "cardCode": "PASS_SUCCESSFUL", "min": 1, "max": 6 },
+  { "cardCode": "PASS_UNSUCCESSFUL", "min": 1, "max": 4 },
+  { "cardCode": "THROW_IN", "min": 1, "max": 3 },
+  { "cardCode": "SHOOT_GOAL", "min": 1, "max": 3 },
+  { "cardCode": "SHOOT_SAVED", "min": 1, "max": 3 },
+  { "cardCode": "SHOOT_MISSED", "min": 1, "max": 3 },
+  { "cardCode": "SHOOT_OUT", "min": 1, "max": 2 },
+  { "cardCode": "SHOOT_CORNER", "min": 1, "max": 3 },
+  { "cardCode": "TACKLE_SUCCESSFUL", "min": 1, "max": 4 },
+  { "cardCode": "TACKLE_YELLOW", "min": 1, "max": 2 },
+  { "cardCode": "TACKLE_RED", "min": 1, "max": 1 },
+  { "cardCode": "PENALTY", "min": 1, "max": 2 },
+  { "cardCode": "FULL_TIME", "min": 1, "max": 1 }
+]
