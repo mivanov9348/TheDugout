@@ -1,16 +1,18 @@
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SQLite;
-using UnityEngine;
 using TheDugout.Data;
+using TheDugout.Logic;
+using UnityEngine;
 
 namespace TheDugout.Database
 {
     public class GameDatabaseManager : MonoBehaviour
     {
         public static GameDatabaseManager Instance { get; private set; }
-        private SQLiteConnection _connection;
+        private SQLiteConnection _connection;   // <-- ТОВА ЛИПСВАШЕ
+        public SQLiteConnection Connection => _connection;
         public string CurrentSavePath { get; private set; }
 
         private void Awake()
@@ -36,6 +38,18 @@ namespace TheDugout.Database
 
             Debug.Log("Save loaded: " + savePath);
         }
+
+        public void GenerateBaseDecksForTeams(List<int> teamIds)
+        {
+            foreach (int teamId in teamIds)
+            {
+                var deckCards = DeckBuilder.BuildBaseDeck(_connection, teamId);
+                _connection.InsertAll(deckCards);
+            }
+        }
+
+        public List<TeamDeckCard> GetTeamDeck(int teamId) =>
+            _connection.Table<TeamDeckCard>().Where(d => d.TeamId == teamId).ToList();
 
         // ------- Teams -------
         public List<Team> GetAllTeams() => _connection.Table<Team>().ToList();
