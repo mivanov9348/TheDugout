@@ -164,37 +164,55 @@ public class PlayerSetupController : MonoBehaviour
     private void ConfirmAndStart()
     {
         confirmPopup.SetActive(false);
+        Debug.Log("Step 1: Popup closed");
 
         string username = usernameInput.text.Trim();
 
         string newSavePath = SaveManager.CreateNewSave(selectedTeamName);
+        Debug.Log("Step 2: Save created at " + newSavePath);
+
         GameDatabaseManager.Instance.LoadSave(newSavePath);
+        Debug.Log("Step 3: Save loaded");
 
         var allTeamsInSave = GameDatabaseManager.Instance.GetAllTeams();
+        Debug.Log("Step 4: Teams count = " + allTeamsInSave.Count);
+
         var matchedTeam = allTeamsInSave.FirstOrDefault(t => t.Name == selectedTeamName);
+        Debug.Log("Step 5: Matched team = " + (matchedTeam != null ? matchedTeam.Name : "NULL"));
+
         int teamId = matchedTeam != null ? matchedTeam.Id : allTeamsInSave.First().Id;
 
         var season = GameDatabaseManager.Instance.CreateSeason(1, isActive: true);
+        Debug.Log("Step 6: Season created, Id = " + season.Id);
+
         GameDatabaseManager.Instance.CreateManagerProfile(username, teamId, season.Id);
+        Debug.Log("Step 7: Manager profile created");
 
         var leagueTeams = GameDatabaseManager.Instance.GetTeamsByLeague(matchedTeam.LeagueId);
+        Debug.Log("Step 8: League teams count = " + leagueTeams.Count);
+
         var leagueCompetition = GameDatabaseManager.Instance.CreateCompetition(
             $"League Season {season.Number}",
             CompetitionTypes.League,
             season.Id,
             matchedTeam.LeagueId
         );
+        Debug.Log("Step 9: Competition created, Id = " + leagueCompetition.Id);
 
         var fixtures = TheDugout.Logic.FixtureGenerator.GenerateRoundRobin(
             leagueCompetition.Id, leagueTeams, DateTime.Now
         );
-        GameDatabaseManager.Instance.InsertFixtures(fixtures);
+        Debug.Log("Step 10: Fixtures generated, count = " + fixtures.Count);
 
-        // ---- Генериране на базово тесте за ВСЕКИ отбор в лигата (играч + CPU) ----
+        GameDatabaseManager.Instance.InsertFixtures(fixtures);
+        Debug.Log("Step 11: Fixtures inserted");
+
         GameDatabaseManager.Instance.GenerateBaseDecksForTeams(leagueTeams.Select(t => t.Id).ToList());
+        Debug.Log("Step 12: Decks generated");
 
         Debug.Log($"Generated {fixtures.Count} fixtures and decks for {leagueTeams.Count} teams, season {season.Number}.");
 
         SceneManager.LoadScene("Hub");
+        Debug.Log("Step 13: Scene loading Hub");
     }
 }   

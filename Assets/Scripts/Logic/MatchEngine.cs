@@ -32,6 +32,10 @@ namespace TheDugout.Logic
         private int _possessionTeamId; // кой отбор тегли в момента
         private int _pendingExtraDraws; // за Yellow/Red ефекти
 
+        private int _homeCardsDrawn, _awayCardsDrawn;
+        public int HomeCardsDrawn => _homeCardsDrawn;
+        public int AwayCardsDrawn => _awayCardsDrawn;
+
         public MatchPhase Phase { get; private set; } = MatchPhase.InProgress;
         public List<string> Log { get; } = new List<string>();
 
@@ -102,6 +106,9 @@ namespace TheDugout.Logic
 
         private Card DrawFromTeamPile(int teamId)
         {
+            if (teamId == _homeTeamId) _homeCardsDrawn++;
+            else _awayCardsDrawn++;
+
             List<Card> drawPile = teamId == _homeTeamId ? _homeDrawPile : _awayDrawPile;
             List<Card> discardPile = teamId == _homeTeamId ? _homeDiscardPile : _awayDiscardPile;
 

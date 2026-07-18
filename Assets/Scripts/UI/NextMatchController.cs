@@ -14,25 +14,30 @@ public class NextMatchController : MonoBehaviour
 
     [Header("Decks")]
     public Image awayDeckImage;
-    public TMP_Text awayDeckCountText;
     public Image homeDeckImage;
-    public TMP_Text homeDeckCountText;
 
-    [Header("Revealed Card")]
-    public Image revealedCardImage;
-    public TMP_Text revealedCardText;
+    [Header("Slots")]
+    public Image myCardImage;
+    public TMP_Text myCardText;
+    public Image cpuCardImage;
+    public TMP_Text cpuCardText;
 
     [Header("Controls")]
     public Button drawCardButton;
     public Button backButton;
 
-    [Header("Card Back Sprites")]
-    public Sprite cardBackSprite; // сложи тук гърба на картите (еднакъв за двете тестета)
+    [Header("Sprites")]
+    public Sprite cardBackSprite;
+
+    [Header("Stats")]
+    public TMP_Text cardsDrawnText;
+    public TMP_Text possessionText;
 
     private MatchEngine matchEngine;
     private int homeTeamId, awayTeamId;
     private string homeTeamName, awayTeamName;
     private int currentFixtureId;
+    private bool isMyTeamHome;
 
     void Start()
     {
@@ -64,7 +69,7 @@ public class NextMatchController : MonoBehaviour
 
         if (nextFixture == null)
         {
-            revealedCardText.text = "No upcoming fixtures found.";
+            myCardText.text = "No fixtures.";
             drawCardButton.interactable = false;
             return;
         }
@@ -74,40 +79,59 @@ public class NextMatchController : MonoBehaviour
         homeTeamName = GameDatabaseManager.Instance.GetTeamById(homeTeamId).Name;
         awayTeamName = GameDatabaseManager.Instance.GetTeamById(awayTeamId).Name;
         currentFixtureId = nextFixture.Id;
+        isMyTeamHome = (homeTeamId == myTeam.Id);
 
         matchEngine = new MatchEngine(GameDatabaseManager.Instance.Connection, homeTeamId, awayTeamId);
 
         UpdateScoreText();
-        UpdateDeckCounts();
-        revealedCardText.text = $"{homeTeamName} vs {awayTeamName} - Kick off!";
+        myCardText.text = "—";
+        cpuCardText.text = "—";
+
+        UpdateStatsText();
     }
 
     private void OnDrawCardClicked()
     {
         if (matchEngine == null || matchEngine.Phase == MatchPhase.Finished) return;
 
+        bool possessionIsHome = matchEngine.CurrentPossessionTeamId == homeTeamId;
+        bool possessionIsMine = possessionIsHome == isMyTeamHome;
+
         Card drawn = matchEngine.DrawNext();
         if (drawn == null) return;
 
-        // покажи разкритата карта визуално
-        revealedCardText.text = drawn.DisplayName;
+        Sprite cardSprite = LoadCardSprite(drawn.Code);
 
-        if (!string.IsNullOrEmpty(drawn.FrontSpritePath))
+        if (possessionIsMine)
         {
-            // ако имаш система за зареждане на спрайтове по път, тук ще я викаш
-            // засега placeholder - оставяме предишния sprite или default
+            myCardText.text = drawn.DisplayName;
+            if (cardSprite != null) myCardImage.sprite = cardSprite;
+        }
+        else
+        {
+            cpuCardText.text = drawn.DisplayName;
+            if (cardSprite != null) cpuCardImage.sprite = cardSprite;
         }
 
         UpdateScoreText();
-        UpdateDeckCounts();
+        UpdateStatsText();
 
         if (matchEngine.Phase == MatchPhase.Finished)
         {
             var result = matchEngine.GetResult();
             GameDatabaseManager.Instance.RecordFixtureResult(currentFixtureId, result.HomeGoals, result.AwayGoals);
             drawCardButton.interactable = false;
-            revealedCardText.text = $"FULL TIME: {homeTeamName} {result.HomeGoals} - {result.AwayGoals} {awayTeamName}";
         }
+    }
+
+    private Sprite LoadCardSprite(string cardCode)
+    {
+        Sprite sprite = Resources.Load<Sprite>("Cards/" + cardCode);
+        if (sprite == null)
+        {
+            Debug.LogWarning($"No sprite found for card code: {cardCode}");
+        }
+        return sprite;
     }
 
     private void UpdateScoreText()
@@ -116,9 +140,22 @@ public class NextMatchController : MonoBehaviour
         scoreText.text = $"{homeTeamName} {result.HomeGoals} - {result.AwayGoals} {awayTeamName}";
     }
 
-    private void UpdateDeckCounts()
+    private void UpdateStatsText()
     {
-        // по избор - ако искаш да показваш броя оставащи карти, MatchEngine трябва да expose-не тези числа
-        // засега пропускаме, добавяме ако потрябва
+        int totalCards = matchEngine.HomeCardsDrawn + matchEngine.AwayCardsDrawn;
+        cardsDrawnText.text = $"Cards drawn: {totalCards}";
+
+        int myCards = isMyTeamHome ? matchEngine.HomeCardsDrawn : matchEngine.AwayCardsDrawn;
+        int cpuCards = isMyTeamHome ? matchEngine.AwayCardsDrawn : matchEngine.HomeCardsDrawn;
+
+        if (totalCards > 0)
+        {
+            int myPercent = Mathf.RoundToInt((float)myCards / totalCards * 100);
+            possessionText.text = $"Possession: {myPercent}% - {100 - myPercent}%";
+        }
+        else
+        {
+            possessionText.text = "Possession: —";
+        }
     }
 }

@@ -28,6 +28,8 @@ namespace TheDugout.Database
                 connection.CreateTable<Team>();
                 connection.CreateTable<Card>();
                 connection.CreateTable<ManagerProfile>();
+                connection.CreateTable<DeckSlotDefinition>();   
+                connection.CreateTable<TeamDeckCard>();
 
                 // Съдържанието идва от JSON
                 MasterDataImporter.ImportInto(connection);
